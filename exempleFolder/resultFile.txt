@@ -1,0 +1,1 @@
+Append, not override: new textText written async: new text
