@@ -1,1 +1,1 @@
-Append, not override: new textText written async: new text
+Append, not override: new textText written async: new textAppend, not override: new textText written async: new textAppend, not override: new textText written async: new textAppend, not override: new textText written async: new textAppend, not override: new textText written async: new text

@@ -6,3 +6,5 @@ require - function to use modules
 module - info about current module
 process - info about env
 */
+//require('./modules');
+require('./streams-files');
