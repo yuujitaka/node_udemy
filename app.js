@@ -3,16 +3,8 @@ const app = express();
 const PORT = 5000;
 
 //built-in middleware for serving static files
+//it serves index.html automatically in GET /, to remove this behavior use { index: false }
 app.use(express.static('./public'));
-
-app.get('/', (req, res) => {
-  /* OR
-  const path = require('path');
-  res.sendFile(path.join(__dirname, '/src/index.html'))
-  res.sendFile(path.resolve('src/index.html'));
-*/
-  res.sendFile('./public/index.html', { root: __dirname });
-});
 
 app.all('*', (req, res) => {
   res.status(404).send('Not found');
