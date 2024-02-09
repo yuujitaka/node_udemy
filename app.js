@@ -3,7 +3,7 @@ const app = express();
 const logger = require('./middleware/logger');
 const PORT = 5000;
 
-//app.use(middleware) app.use(route, middleware) app.use([middleware])
+//app.use(middleware) app.use(route, middleware) app.use([middlewares])
 app.use('/api', logger);
 
 app.get('/', (req, res) => {
