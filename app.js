@@ -1,21 +1,22 @@
+const people = require('./dummydata');
 const express = require('express');
 const app = express();
-const logger = require('./middleware/logger');
 const PORT = 5000;
 
-//app.use(middleware) app.use(route, middleware) app.use([middlewares])
-app.use('/api', logger);
+app.use(express.static('./public'));
+//parses incoming requests with JSON payloads ex: req.body.property
+app.use(express.json());
+// to form-data
+app.use(express.urlencoded({ extended: false }));
 
-app.get('/', (req, res) => {
-  res.send('Home');
+app.get('/api/people', (req, res) => {
+  res.status(200).json({ data: people });
 });
 
-app.get('/api/about', (req, res) => {
-  res.send('API About');
-});
-
-app.get('/about', (req, res) => {
-  res.send('About');
+app.post('/api/people', (req, res) => {
+  const { user } = req.body;
+  if (!user) return res.status(400).json({ message: 'User required.' });
+  res.status(201).json({ data: user });
 });
 
 app.listen(PORT, () => {
