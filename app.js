@@ -3,7 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const routerTasks = require('./routes/tasks');
 const connectDB = require('./config/db');
-const PORT = 5000;
+const PORT = 3000;
 
 connectDB();
 // to access req.body.property
