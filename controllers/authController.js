@@ -4,13 +4,15 @@ const HttpError = require('../utils/errors');
 
 const register = async (req, res) => {
   const user = await User.create({ ...req.body });
-  res.status(StatusCodes.CREATED).json({ token: user.generateToken() });
+  res
+    .status(StatusCodes.CREATED)
+    .json({ user: { ...user._doc, token: user.generateToken() } });
 };
 
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    throw new HttpError('Name and password required', StatusCodes.BAD_REQUEST);
+    throw new HttpError('Email and password required', StatusCodes.BAD_REQUEST);
   }
 
   const user = await User.findOne({ email });
@@ -25,7 +27,9 @@ const login = async (req, res) => {
     throw new HttpError('Invalid credentials', StatusCodes.UNAUTHORIZED);
   }
 
-  res.status(StatusCodes.OK).json({ token: user.generateToken() });
+  res
+    .status(StatusCodes.OK)
+    .json({ user: { ...user._doc, token: user.generateToken() } });
 };
 
 module.exports = {
