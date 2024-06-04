@@ -4,9 +4,10 @@ const HttpError = require('../utils/errors');
 
 const register = async (req, res) => {
   const user = await User.create({ ...req.body });
-  res
-    .status(StatusCodes.CREATED)
-    .json({ user: { ...user._doc, token: user.generateToken() } });
+
+  res.status(StatusCodes.CREATED).json({
+    user: { ...user.toJSON(), token: user.generateToken() },
+  });
 };
 
 const login = async (req, res) => {
@@ -27,12 +28,35 @@ const login = async (req, res) => {
     throw new HttpError('Invalid credentials', StatusCodes.UNAUTHORIZED);
   }
 
-  res
-    .status(StatusCodes.OK)
-    .json({ user: { ...user._doc, token: user.generateToken() } });
+  res.status(StatusCodes.OK).json({
+    user: { ...user.toJSON(), token: user.generateToken() },
+  });
+};
+
+const updateUser = async (req, res) => {
+  const userId = req.user.id;
+  const { name, email } = req.body;
+
+  if (!name || !email) {
+    throw new HttpError('Name and email required', StatusCodes.BAD_REQUEST);
+  }
+
+  const user = await User.findByIdAndUpdate(userId, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!user) {
+    throw new HttpError('No user found', StatusCodes.NOT_FOUND);
+  }
+
+  res.status(StatusCodes.OK).json({
+    user: { ...user.toJSON(), token: user.generateToken() },
+  });
 };
 
 module.exports = {
   register,
   login,
+  updateUser,
 };

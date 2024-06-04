@@ -58,4 +58,12 @@ UserSchema.methods.checkPassword = async function (requestPassword) {
   return isMatch;
 };
 
+UserSchema.methods.toJSON = function () {
+  let obj = this.toObject();
+  delete obj.password;
+  delete obj._id;
+  delete obj.__v;
+  return obj;
+};
+
 module.exports = mongoose.model('User', UserSchema);

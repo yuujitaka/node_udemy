@@ -6,7 +6,7 @@ const connectDB = require('./config/db');
 const authenticationMiddleware = require('./middleware/auth');
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
-const authRouter = require('./routes/auth');
+const userRouter = require('./routes/user');
 const jobsRouter = require('./routes/jobs');
 //swagger
 const swaggerUI = require('swagger-ui-express');
@@ -28,7 +28,7 @@ app.use(helmet());
 app.use(xss());
 
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
-app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/auth', userRouter);
 app.use('/api/v1/jobs', authenticationMiddleware, jobsRouter);
 
 app.get('*', (req, res) => {
