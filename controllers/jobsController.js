@@ -32,11 +32,11 @@ const createJob = async (req, res) => {
 const updateJob = async (req, res) => {
   const jobId = req.params.id;
   const userId = req.user.id;
-  const { company, position } = req.body;
+  const { company, position, jobLocation } = req.body;
 
-  if (!company && !position) {
+  if (!company || !position || !jobLocation) {
     throw new HttpError(
-      'Company or position required',
+      'Company, position and location required',
       StatusCodes.BAD_REQUEST
     );
   }

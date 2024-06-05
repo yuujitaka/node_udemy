@@ -53,7 +53,7 @@ const allJobsSlice = createSlice({
     },
     [getAllJobs.fulfilled]: (state, { payload }) => {
       state.isLoading = false;
-      state.jobs = payload.jobs;
+      state.jobs = payload;
       state.numOfPages = payload.numOfPages;
       state.totalJobs = payload.totalJobs;
     },
