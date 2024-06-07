@@ -3,8 +3,37 @@ const HttpError = require('../utils/errors');
 const Job = require('../model/Job');
 
 const getAllJobs = async (req, res) => {
-  const jobs = await Job.find({ createdBy: req.user.id }).sort('createdAt');
-  res.status(StatusCodes.OK).json(jobs);
+  const { search, status, jobType, sort, page, limit: limitReq } = req.query;
+  const limit = Number(limitReq) || 10;
+  const skip = ((Number(page) || 1) - 1) * limit;
+  //alternative is to use ifs as store api
+  const queryObject = {
+    createdBy: req.user.id,
+    ...(search ? { position: { $regex: search, $options: 'i' } } : {}),
+    ...(status && status !== 'all' ? { status } : {}),
+    ...(jobType && jobType !== 'all' ? { jobType } : {}),
+  };
+  const mapSorting = {
+    latest: '-createdAt',
+    oldest: 'createdAt',
+    'a-z': 'position',
+    'z-a': '-position',
+  };
+
+  let query = Job.find(queryObject);
+
+  if (sort) {
+    query = query.sort(mapSorting[sort]);
+  }
+
+  query = query.skip(skip).limit(limit);
+
+  const jobs = await query;
+
+  const totalJobs = await Job.countDocuments(queryObject);
+  const numOfPages = Math.ceil(totalJobs / limit);
+
+  res.status(StatusCodes.OK).json({ jobs, totalJobs, numOfPages });
 };
 
 const getJob = async (req, res) => {
