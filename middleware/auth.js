@@ -12,7 +12,8 @@ const authenticationMiddleware = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    const testUser = decoded.id === '665f2569e18c8e87335cf4f8';
+    req.user = { ...decoded, testUser };
     next();
   } catch {
     throw new HttpError('Invalid credentials', StatusCodes.UNAUTHORIZED);
