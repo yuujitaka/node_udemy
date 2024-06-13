@@ -19,6 +19,8 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 connectDB();
 
+app.set('trust proxy', 1);
+
 //swagger load
 const swaggerDocument = YAML.load('./swagger.yaml');
 app.use(express.static(path.resolve(__dirname, './client/build')));
