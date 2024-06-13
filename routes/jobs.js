@@ -7,9 +7,11 @@ const {
   createJob,
   updateJob,
   deleteJob,
+  showStats,
 } = require('../controllers/jobsController');
 
 router.route('/').post(testUserMiddleware, createJob).get(getAllJobs);
+router.route('/stats').get(showStats);
 router
   .route('/:id')
   .get(getJob)
