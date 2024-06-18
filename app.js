@@ -10,14 +10,9 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 connectDB();
 
-app.use(express.static(path.resolve(__dirname, './client/build')));
-
-app.use(express.json());
-
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
+app.get('/', (req, res) => {
+  res.send('<h1>File Upload Starter</h1>');
 });
-
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
