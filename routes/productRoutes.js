@@ -7,6 +7,6 @@ const {
 const uploadImage = require('../controllers/uploadController');
 
 router.route('/').post(createProduct).get(getAllProducts);
-router.route('/upload').post(uploadImage);
+router.route('/uploads').post(uploadImage);
 
 module.exports = router;
