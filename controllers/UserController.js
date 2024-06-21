@@ -7,7 +7,7 @@ const login = async (req, res) => {
 };
 
 const register = async (req, res) => {
-  const { email } = req.body;
+  const { email, name, password } = req.body;
 
   // there is also the unique property in User model, but it throws mongoose errors and they can be unfriendly
   const emailAlreadyExists = await User.findOne({ email });
@@ -15,7 +15,11 @@ const register = async (req, res) => {
   if (emailAlreadyExists)
     throw new HttpError('Email already exists', StatusCodes.CONFLICT);
 
-  const user = await User.create(req.body);
+  //register the first user as admin
+  const isFirstAccount = (await User.countDocuments({})) === 0;
+  const role = isFirstAccount ? 'admin' : 'user';
+  //could be also create(req.body), but that way the role could be manipulated
+  const user = await User.create({ name, email, password, role });
 
   res.status(StatusCodes.CREATED).json(user);
 };
