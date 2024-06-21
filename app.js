@@ -11,9 +11,10 @@ app.get('/', (req, res) => {
 const start = async () => {
   try {
     await connectDB();
+    console.log('Connected to DB');
     app.listen(port, () => console.log('Server listening on Port', port));
   } catch (error) {
-    console.log('error:', error);
+    console.log('Start error:', error);
   }
 };
 
