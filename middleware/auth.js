@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
-const HttpError = require('../utils/errors');
+const { HttpError } = require('../utils');
 
 const authenticationMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;

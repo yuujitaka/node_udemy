@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const HttpError = require('../utils/errors');
+const { HttpError, createJWT } = require('../utils');
 const User = require('../model/User');
 
 const login = async (req, res) => {
@@ -21,7 +21,10 @@ const register = async (req, res) => {
   //could be also create(req.body), but that way the role could be manipulated
   const user = await User.create({ name, email, password, role });
 
-  res.status(StatusCodes.CREATED).json(user);
+  const tokenProps = { name: user.name, id: user._id, role: user.role };
+  const token = createJWT(tokenProps);
+
+  res.status(StatusCodes.CREATED).json({ ...user._doc, token });
 };
 
 const logout = async (req, res) => {
