@@ -4,12 +4,15 @@ const morgan = require('morgan');
 const connectDB = require('./config/db');
 const notFoundMiddleware = require('./middleware/error-handler');
 const errorHandlerMiddleware = require('./middleware/error-handler');
+const UserRoutes = require('./routes/userRoutes');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(morgan('tiny'));
 app.use(express.json());
+
+app.use('/api/v1/auth', UserRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello!');
