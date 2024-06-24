@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const { HttpError, createJWT } = require('../utils');
+const { HttpError, setCookies } = require('../utils');
 const User = require('../model/User');
 
 const login = async (req, res) => {
@@ -20,22 +20,15 @@ const register = async (req, res) => {
   const role = isFirstAccount ? 'admin' : 'user';
   //could be also create(req.body), but that way the role could be manipulated
   const user = await User.create({ name, email, password, role });
-
   const tokenProps = { name: user.name, id: user._id, role: user.role };
-  const token = createJWT(tokenProps);
 
-  const oneDay = 1000 * 60 * 60 * 24;
-
-  res.cookie('token', token, {
-    httpOnly: true,
-    expires: new Date(Date.now() + oneDay),
-  });
+  setCookies(res, tokenProps);
 
   const response = {
-    name: user._doc.name,
+    ...tokenProps,
     email: user._doc.email,
-    role: user._doc.role,
   };
+
   res.status(StatusCodes.CREATED).json(response);
 };
 

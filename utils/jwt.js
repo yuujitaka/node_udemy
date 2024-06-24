@@ -10,4 +10,16 @@ const createJWT = (payload) => {
 
 const verifyJWT = (token) => jwt.verify(token, process.env.JWT_SECRET);
 
-module.exports = { createJWT, verifyJWT };
+const setCookies = (res, tokenProps) => {
+  const token = createJWT({ payload: tokenProps });
+  const oneDay = 1000 * 60 * 60 * 24;
+
+  res.cookie('token', token, {
+    httpOnly: true,
+    expires: new Date(Date.now() + oneDay),
+    secure: process.env.NODE_ENV === 'production',
+    signed: true,
+  });
+};
+
+module.exports = { createJWT, verifyJWT, setCookies };

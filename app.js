@@ -12,10 +12,12 @@ const port = process.env.PORT || 3000;
 
 app.use(morgan('tiny'));
 app.use(express.json());
-app.use(cookieParser());
+//sign cookie -> cookieParser(secret)
+app.use(cookieParser(process.env.JWT_SECRET));
 
 app.get('/', (req, res) => {
-  console.log(req.cookies);
+  console.log('normal cookies', req.cookies);
+  console.log('signed cookies', req.signedCookies);
   res.send('Hello!');
 });
 
