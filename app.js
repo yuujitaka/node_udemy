@@ -1,6 +1,7 @@
 require('express-async-errors');
 const express = require('express');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const notFoundMiddleware = require('./middleware/error-handler');
 const errorHandlerMiddleware = require('./middleware/error-handler');
@@ -11,12 +12,14 @@ const port = process.env.PORT || 3000;
 
 app.use(morgan('tiny'));
 app.use(express.json());
-
-app.use('/api/v1/auth', UserRoutes);
+app.use(cookieParser());
 
 app.get('/', (req, res) => {
+  console.log(req.cookies);
   res.send('Hello!');
 });
+
+app.use('/api/v1/auth', UserRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

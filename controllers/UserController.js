@@ -24,7 +24,19 @@ const register = async (req, res) => {
   const tokenProps = { name: user.name, id: user._id, role: user.role };
   const token = createJWT(tokenProps);
 
-  res.status(StatusCodes.CREATED).json({ ...user._doc, token });
+  const oneDay = 1000 * 60 * 60 * 24;
+
+  res.cookie('token', token, {
+    httpOnly: true,
+    expires: new Date(Date.now() + oneDay),
+  });
+
+  const response = {
+    name: user._doc.name,
+    email: user._doc.email,
+    role: user._doc.role,
+  };
+  res.status(StatusCodes.CREATED).json(response);
 };
 
 const logout = async (req, res) => {
