@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const notFoundMiddleware = require('./middleware/error-handler');
 const errorHandlerMiddleware = require('./middleware/error-handler');
-const UserRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
   res.send('Hello!');
 });
 
-app.use('/api/v1/auth', UserRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
