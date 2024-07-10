@@ -30,7 +30,26 @@ const updateUser = async (req, res) => {
 };
 
 const updateUserPassword = async (req, res) => {
-  res.send('update user password');
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword)
+    throw new HttpError(
+      'Please provide old and new passwords',
+      StatusCodes.BAD_REQUEST
+    );
+
+  const user = await User.findById(req.user.id);
+
+  const isPasswordCorrect = await user.comparePassword(oldPassword);
+
+  if (!isPasswordCorrect)
+    throw new HttpError('Invalid old password', StatusCodes.UNAUTHORIZED);
+
+  user.password = newPassword;
+
+  await user.save();
+
+  res.sendStatus(StatusCodes.OK);
 };
 
 module.exports = {
