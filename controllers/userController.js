@@ -21,8 +21,8 @@ const getUser = async (req, res) => {
   res.status(StatusCodes.OK).json(user);
 };
 
-const showUser = async (req, res) => {
-  res.send('show user');
+const showMe = async (req, res) => {
+  res.status(StatusCodes.OK).json(req.user);
 };
 
 const updateUser = async (req, res) => {
@@ -36,7 +36,7 @@ const updateUserPassword = async (req, res) => {
 module.exports = {
   getAllUsers,
   getUser,
-  showUser,
+  showMe,
   updateUser,
   updateUserPassword,
 };
