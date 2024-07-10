@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const notFoundMiddleware = require('./middleware/error-handler');
 const errorHandlerMiddleware = require('./middleware/error-handler');
+const { authenticationMiddleware } = require('./middleware/auth');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 
@@ -23,7 +24,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/users', authenticationMiddleware, userRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
