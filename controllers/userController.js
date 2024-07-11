@@ -35,7 +35,7 @@ const updateUser = async (req, res) => {
       StatusCodes.BAD_REQUEST
     );
 
-  const user = User.findOneAndUpdate(
+  const user = await User.findOneAndUpdate(
     { _id: id },
     { name, email },
     { new: true, runValidators: true }
