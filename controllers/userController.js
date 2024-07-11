@@ -1,6 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const User = require('../model/User');
-const { HttpError } = require('../utils');
+const { HttpError, createTokenUserObj, setCookies } = require('../utils');
 
 const getAllUsers = async (req, res) => {
   //other options: query.select(name email role) / Schema: password:{select: false}
@@ -26,7 +26,25 @@ const showMe = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  res.send('update user');
+  const { name, email } = req.body;
+  const { id } = req.user;
+
+  if (!name || !email)
+    throw new HttpError(
+      'Please provide name and email',
+      StatusCodes.BAD_REQUEST
+    );
+
+  const user = User.findOneAndUpdate(
+    { _id: id },
+    { name, email },
+    { new: true, runValidators: true }
+  );
+  const tokenProps = createTokenUserObj(user);
+
+  setCookies(res, tokenProps);
+
+  res.status(StatusCodes.OK).json(tokenProps);
 };
 
 const updateUserPassword = async (req, res) => {

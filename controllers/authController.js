@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const { HttpError, setCookies } = require('../utils');
+const { HttpError, setCookies, createTokenUserObj } = require('../utils');
 const User = require('../model/User');
 
 const login = async (req, res) => {
@@ -21,16 +21,11 @@ const login = async (req, res) => {
   if (!isPasswordCorrect)
     throw new HttpError('Invalid credentials', StatusCodes.UNAUTHORIZED);
 
-  const tokenProps = { name: user.name, id: user._id, role: user.role };
+  const tokenProps = createTokenUserObj(user);
 
   setCookies(res, tokenProps);
 
-  const response = {
-    ...tokenProps,
-    email: user._doc.email,
-  };
-
-  res.status(StatusCodes.OK).json(response);
+  res.status(StatusCodes.OK).json(tokenProps);
 };
 
 const register = async (req, res) => {
@@ -47,16 +42,12 @@ const register = async (req, res) => {
   const role = isFirstAccount ? 'admin' : 'user';
   //could be also create(req.body), but that way the role could be manipulated
   const user = await User.create({ name, email, password, role });
-  const tokenProps = { name: user.name, id: user._id, role: user.role };
+
+  const tokenProps = createTokenUserObj(user);
 
   setCookies(res, tokenProps);
 
-  const response = {
-    ...tokenProps,
-    email: user._doc.email,
-  };
-
-  res.status(StatusCodes.CREATED).json(response);
+  res.status(StatusCodes.CREATED).json(tokenProps);
 };
 
 const logout = async (req, res) => {

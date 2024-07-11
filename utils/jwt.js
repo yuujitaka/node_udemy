@@ -8,6 +8,10 @@ const createJWT = (payload) => {
   return token;
 };
 
+const createTokenUserObj = (user) => {
+  return { name: user.name, email: user.email, id: user._id, role: user.role };
+};
+
 const verifyJWT = (token) => jwt.verify(token, process.env.JWT_SECRET);
 
 const setCookies = (res, tokenProps) => {
@@ -22,4 +26,4 @@ const setCookies = (res, tokenProps) => {
   });
 };
 
-module.exports = { createJWT, verifyJWT, setCookies };
+module.exports = { createJWT, createTokenUserObj, verifyJWT, setCookies };
