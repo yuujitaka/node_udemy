@@ -1,6 +1,11 @@
 const { StatusCodes } = require('http-status-codes');
 const User = require('../model/User');
-const { HttpError, createTokenUserObj, setCookies } = require('../utils');
+const {
+  HttpError,
+  createTokenUserObj,
+  setCookies,
+  checkPermissions,
+} = require('../utils');
 
 const getAllUsers = async (req, res) => {
   //other options: query.select(name email role) / Schema: password:{select: false}
@@ -17,6 +22,8 @@ const getUser = async (req, res) => {
   const user = await User.findById(id).select('-password');
 
   if (!user) throw new HttpError('User not found', StatusCodes.NOT_FOUND);
+
+  checkPermissions(req.user, user._id);
 
   res.status(StatusCodes.OK).json(user);
 };
@@ -46,6 +53,30 @@ const updateUser = async (req, res) => {
 
   res.status(StatusCodes.OK).json(tokenProps);
 };
+
+//with user.save()
+/* const updateUser = async (req, res) => {
+  const { name, email } = req.body;
+  const { id } = req.user;
+
+  if (!name || !email)
+    throw new HttpError(
+      'Please provide name and email',
+      StatusCodes.BAD_REQUEST
+    );
+
+  const user = await User.findById(id);
+  user.email = email;
+  user.name = name;
+
+  await user.save();
+
+  const tokenProps = createTokenUserObj(user);
+
+  setCookies(res, tokenProps);
+
+  res.status(StatusCodes.OK).json(tokenProps);
+}; */
 
 const updateUserPassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
