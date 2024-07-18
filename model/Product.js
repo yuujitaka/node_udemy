@@ -36,9 +36,12 @@ const ProductSchema = new mongoose.Schema(
         message: '{VALUE} is not supported',
       },
     },
+    //arrays are empty ([]) by default and pass the required validation
     colors: {
       type: [String],
       required: true,
+      //another option: validate: [(value) => value.length > 0, 'error message']
+      default: undefined,
     },
     featured: {
       type: Boolean,
