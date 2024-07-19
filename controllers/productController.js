@@ -1,4 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
+const { HttpError } = require('../utils');
 const Product = require('../model/Product');
 
 const createProduct = async (req, res) => {
@@ -7,19 +8,40 @@ const createProduct = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  res.send('getAllProducts');
+  const products = await Product.find({});
+  res.status(StatusCodes.OK).json(products);
 };
 
 const getProduct = async (req, res) => {
-  res.send('getProduct');
+  const { id } = req.params;
+  const product = await Product.findById(id);
+
+  if (!product) throw new HttpError('No product found', StatusCodes.NOT_FOUND);
+
+  res.status(StatusCodes.OK).json(product);
 };
 
 const updateProduct = async (req, res) => {
-  res.send('updateProduct');
+  const { id } = req.params;
+  const product = await Product.findByIdAndUpdate(id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!product) throw new HttpError('No product found', StatusCodes.NOT_FOUND);
+
+  res.status(StatusCodes.OK).json(product);
 };
 
 const deleteProduct = async (req, res) => {
-  res.send('deleteProduct');
+  const { id } = req.params;
+  //alternative to remove -> await Product.findByIdAndDelete(id);
+  const product = await Product.findById(id);
+  if (!product) throw new HttpError('No product found', StatusCodes.NOT_FOUND);
+
+  await product.deleteOne();
+
+  res.sendStatus(StatusCodes.OK);
 };
 
 const uploadImage = async (req, res) => {
