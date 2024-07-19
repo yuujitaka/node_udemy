@@ -6,6 +6,7 @@ const {
   updateProduct,
   deleteProduct,
   uploadImage,
+  createProductWithImage,
 } = require('../controllers/productController');
 const { permissionsMiddleware } = require('../middleware/auth');
 
@@ -15,6 +16,7 @@ router
   .route('/')
   .post(permissionsMiddleware('admin'), createProduct)
   .get(getAllProducts);
+router.route('/withImage').post(createProductWithImage);
 router.route('/uploadImage').post(permissionsMiddleware('admin'), uploadImage);
 router
   .route('/:id')

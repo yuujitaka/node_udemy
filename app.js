@@ -2,6 +2,7 @@ require('express-async-errors');
 const express = require('express');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const fileUpload = require('express-fileupload');
 const connectDB = require('./config/db');
 const notFoundMiddleware = require('./middleware/error-handler');
 const errorHandlerMiddleware = require('./middleware/error-handler');
@@ -17,6 +18,8 @@ app.use(morgan('tiny'));
 app.use(express.json());
 //sign cookie -> cookieParser(secret)
 app.use(cookieParser(process.env.JWT_SECRET));
+app.use(express.static('./public'));
+app.use(fileUpload());
 
 app.get('/', (req, res) => {
   console.log('normal cookies', req.cookies);
