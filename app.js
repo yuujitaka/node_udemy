@@ -10,6 +10,7 @@ const { authenticationMiddleware } = require('./middleware/auth');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', authenticationMiddleware, userRoutes);
 app.use('/api/v1/products', authenticationMiddleware, productRoutes);
+app.use('/api/v1/reviews', authenticationMiddleware, reviewRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
