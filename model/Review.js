@@ -8,7 +8,7 @@ const ReviewSchema = new mongoose.Schema(
       max: 5,
       required: true,
     },
-    tile: { type: String, trim: true, required: true },
+    title: { type: String, trim: true, required: true },
     comment: { type: String, required: true },
     user: {
       type: mongoose.Types.ObjectId,
