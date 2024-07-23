@@ -2,6 +2,7 @@ const path = require('path');
 const { StatusCodes } = require('http-status-codes');
 const { HttpError, uploadImage: uploadImageUtils } = require('../utils');
 const Product = require('../model/Product');
+const Review = require('../model/Review');
 
 const createProduct = async (req, res) => {
   const product = await Product.create({ ...req.body, user: req.user.id });
@@ -40,6 +41,7 @@ const deleteProduct = async (req, res) => {
   const product = await Product.findById(id);
   if (!product) throw new HttpError('No product found', StatusCodes.NOT_FOUND);
 
+  await Review.deleteMany({ product: id });
   await product.deleteOne();
 
   res.sendStatus(StatusCodes.OK);

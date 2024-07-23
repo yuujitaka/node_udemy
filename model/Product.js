@@ -66,7 +66,7 @@ const ProductSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  { timestamps: true, toJSON: { virtuals: true }, id: false }
 );
 
 ProductSchema.virtual('reviews', {
@@ -75,5 +75,10 @@ ProductSchema.virtual('reviews', {
   foreignField: 'product',
   justOne: false,
 });
+
+//alternative of deleting in controller
+/* ProductSchema.pre('remove', async function (next) {
+  await this.model('Review').deleteMany({ product: this._id });
+}); */
 
 module.exports = mongoose.model('Product', ProductSchema);
