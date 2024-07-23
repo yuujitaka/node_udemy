@@ -36,7 +36,16 @@ const createReview = async (req, res) => {
 };
 
 const getAllReviews = async (req, res) => {
-  const reviews = await Review.find({});
+  //Population is the process of replacing the specified path in the document of one collection with the actual document from the other collection.
+  const reviews = await Review.find({})
+    .populate({
+      path: 'product',
+      select: 'name price',
+    })
+    .populate({
+      path: 'user',
+      select: 'name',
+    });
 
   res.status(StatusCodes.OK).json(reviews);
 };
