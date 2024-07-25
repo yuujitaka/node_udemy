@@ -25,14 +25,14 @@ const ProductSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ['office', 'kitchen', 'bedroom'],
+      enum: ['office', 'kitchen', 'bedroom', 'fitness'],
     },
     company: {
       type: String,
       required: true,
       //another option to enum
       enum: {
-        values: ['ikea', 'liddy', 'marcos'],
+        values: ['ikea', 'samsung', 'amazon'],
         message: '{VALUE} is not supported',
       },
     },
@@ -60,6 +60,10 @@ const ProductSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    numOfReviews: {
+      type: Number,
+      default: 0,
+    },
     user: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
@@ -79,6 +83,7 @@ ProductSchema.virtual('reviews', {
 //alternative of deleting in controller
 /* ProductSchema.pre('remove', async function (next) {
   await this.model('Review').deleteMany({ product: this._id });
+  next();
 }); */
 
 module.exports = mongoose.model('Product', ProductSchema);
