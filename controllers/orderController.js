@@ -59,19 +59,45 @@ const createOrder = async (req, res) => {
 };
 
 const getAllOrders = async (req, res) => {
-  res.send('getAllOrders');
+  const orders = await Order.find({});
+  res.status(StatusCodes.OK).json(orders);
 };
 
 const getUserOrders = async (req, res) => {
-  res.send('getUserOrders');
+  const orders = await Order.find({ user: req.user.id });
+
+  res.status(StatusCodes.OK).json(orders);
 };
 
 const getOrder = async (req, res) => {
-  res.send('getOrder');
+  const { id: orderId } = req.params;
+  const order = await Order.findById(orderId);
+
+  if (!order) throw new HttpError('Order not found', StatusCodes.NOT_FOUND);
+
+  checkPermissions(req.user, order.user);
+
+  res.status(StatusCodes.OK).json(order);
 };
 
 const updateOrder = async (req, res) => {
-  res.send('updateOrder');
+  const { id: orderId } = req.params;
+  const { paymentId } = req.body;
+  const order = await Order.findById(orderId);
+
+  if (!order) throw new HttpError('Order not found', StatusCodes.NOT_FOUND);
+  checkPermissions(req.user.id, order.user);
+
+  const newOrder = await Order.findByIdAndUpdate(
+    orderId,
+    { paymentId, status: 'paid' },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  res.status(StatusCodes.OK).json(newOrder);
 };
 
 module.exports = {
