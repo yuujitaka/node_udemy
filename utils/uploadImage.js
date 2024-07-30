@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const { HttpError } = require('../utils');
+const HttpError = require('./errors');
 const path = require('path');
 
 const uploadImage = async (image) => {
