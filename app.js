@@ -16,7 +16,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 6000;
 
 app.set('trust proxy', 1);
 app.use(
@@ -34,7 +34,8 @@ app.use(morgan('tiny'));
 app.use(express.json());
 //sign cookie -> cookieParser(secret)
 app.use(cookieParser(process.env.JWT_SECRET));
-app.use(express.static('./frontend'));
+/* app.use(express.static('./frontend/public'));
+ */
 app.use(fileUpload());
 
 app.use('/api/v1/auth', authRoutes);

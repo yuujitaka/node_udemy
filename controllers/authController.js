@@ -40,14 +40,20 @@ const register = async (req, res) => {
   //register the first user as admin
   const isFirstAccount = (await User.countDocuments({})) === 0;
   const role = isFirstAccount ? 'admin' : 'user';
+
+  const verificationToken = 'fake token';
   //could be also create(req.body), but that way the role could be manipulated
-  const user = await User.create({ name, email, password, role });
+  await User.create({
+    name,
+    email,
+    password,
+    role,
+    verificationToken,
+  });
 
-  const tokenProps = createTokenUserObj(user);
-
-  setCookies(res, tokenProps);
-
-  res.status(StatusCodes.CREATED).json(tokenProps);
+  res
+    .status(StatusCodes.CREATED)
+    .json({ msg: 'Success, Please check your email' });
 };
 
 const logout = async (req, res) => {
