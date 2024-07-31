@@ -6,7 +6,6 @@ const {
 } = require('./jwt');
 const HttpError = require('./errors');
 const checkPermissions = require('./checkPermissions');
-const uploadImage = require('./uploadImage');
 
 module.exports = {
   createJWT,
@@ -15,5 +14,4 @@ module.exports = {
   setCookies,
   HttpError,
   checkPermissions,
-  uploadImage,
 };
