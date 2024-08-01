@@ -1,4 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
+const crypto = require('crypto');
 const { HttpError, setCookies, createTokenUserObj } = require('../utils');
 const User = require('../model/User');
 
@@ -21,6 +22,9 @@ const login = async (req, res) => {
   if (!isPasswordCorrect)
     throw new HttpError('Invalid credentials', StatusCodes.UNAUTHORIZED);
 
+  if (!user.isVerified)
+    throw new HttpError('Please verify your email', StatusCodes.UNAUTHORIZED);
+
   const tokenProps = createTokenUserObj(user);
 
   setCookies(res, tokenProps);
@@ -41,7 +45,7 @@ const register = async (req, res) => {
   const isFirstAccount = (await User.countDocuments({})) === 0;
   const role = isFirstAccount ? 'admin' : 'user';
 
-  const verificationToken = 'fake token';
+  const verificationToken = crypto.randomBytes(40).toString('hex');
   //could be also create(req.body), but that way the role could be manipulated
   await User.create({
     name,
@@ -56,6 +60,27 @@ const register = async (req, res) => {
     .json({ msg: 'Success, Please check your email' });
 };
 
+const verifyEmail = async (req, res) => {
+  const { verificationToken, email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user)
+    throw new HttpError('Verification failed', StatusCodes.UNAUTHORIZED);
+
+  if (verificationToken !== user.verificationToken)
+    throw new HttpError(
+      'Verification failed: Invalid token',
+      StatusCodes.UNAUTHORIZED
+    );
+
+  user.isVerified = true;
+  user.verified = Date.now();
+  user.verificationToken = '';
+  await user.save();
+
+  res.status(StatusCodes.OK).json({ msg: 'Email verified' });
+};
+
 const logout = async (req, res) => {
   res.cookie('token', '', {
     httpOnly: true,
@@ -68,5 +93,6 @@ const logout = async (req, res) => {
 module.exports = {
   login,
   register,
+  verifyEmail,
   logout,
 };
