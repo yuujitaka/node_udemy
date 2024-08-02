@@ -16,7 +16,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 const app = express();
-const port = process.env.PORT || 6000;
+const port = process.env.PORT || 4000;
 
 app.set('trust proxy', 1);
 app.use(
@@ -26,7 +26,12 @@ app.use(
   })
 );
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  })
+);
 app.use(xss());
 app.use(mongoSanitize());
 
@@ -34,10 +39,7 @@ app.use(morgan('tiny'));
 app.use(express.json());
 //sign cookie -> cookieParser(secret)
 app.use(cookieParser(process.env.JWT_SECRET));
-/* app.use(express.static('./frontend/public'));
- */
 app.use(fileUpload());
-
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', authenticationMiddleware, userRoutes);
 

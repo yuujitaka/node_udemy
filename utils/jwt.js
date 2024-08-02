@@ -23,6 +23,7 @@ const setCookies = (res, tokenProps) => {
     expires: new Date(Date.now() + oneDay),
     secure: process.env.NODE_ENV === 'production',
     signed: true,
+    sameSite: 'Lax',
   });
 };
 

@@ -5,13 +5,13 @@ import { Redirect } from 'react-router-dom';
 import { useGlobalContext } from '../context';
 function Dashboard() {
   const { user } = useGlobalContext();
-  const { name, userId, role } = user;
+  const { name, email, role } = user;
   return (
     <>
       <Wrapper className='page'>
         <h2>Hello there, {user.name}</h2>
         <p>
-          Your ID : <span>{userId}</span>
+          Your email : <span>{email}</span>
         </p>
         <p>
           Your Role : <span>{role}</span>

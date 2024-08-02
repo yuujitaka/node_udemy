@@ -1,6 +1,11 @@
 const { StatusCodes } = require('http-status-codes');
 const crypto = require('crypto');
-const { HttpError, setCookies, createTokenUserObj } = require('../utils');
+const {
+  HttpError,
+  setCookies,
+  createTokenUserObj,
+  sendVerificationEmail,
+} = require('../utils');
 const User = require('../model/User');
 
 const login = async (req, res) => {
@@ -53,6 +58,13 @@ const register = async (req, res) => {
     password,
     role,
     verificationToken,
+  });
+
+  await sendVerificationEmail({
+    name,
+    email,
+    verificationToken,
+    origin: 'http://localhost:3000',
   });
 
   res

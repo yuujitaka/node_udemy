@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link, useHistory, Redirect } from 'react-router-dom';
+import url from '../utils/url';
+
 import FormRow from '../components/FormRow';
 import { useGlobalContext } from '../context';
 import useLocalState from '../utils/localState';
@@ -26,17 +28,19 @@ function Login() {
     const { email, password } = values;
     const loginUser = { email, password };
     try {
-      const { data } = await axios.post(`/api/v1/auth/login`, loginUser);
+      const { data } = await axios.post(`${url}/api/v1/auth/login`, loginUser, {
+        withCredentials: true,
+      });
       setValues({ name: '', email: '', password: '' });
       showAlert({
-        text: `Welcome, ${data.user.name}. Redirecting to dashboard...`,
+        text: `Welcome, ${data.name}. Redirecting to dashboard...`,
         type: 'success',
       });
       setLoading(false);
-      saveUser(data.user);
+      saveUser(data);
       history.push('/dashboard');
     } catch (error) {
-      showAlert({ text: error.response.data.msg });
+      showAlert({ text: error.response.data });
       setLoading(false);
     }
   };

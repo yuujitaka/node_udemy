@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
 const { HttpError, verifyJWT } = require('../utils');
 
@@ -12,6 +11,7 @@ const authenticationMiddleware = async (req, res, next) => {
     req.user = decodedToken.payload;
     next();
   } catch (err) {
+    console.error(err);
     throw new HttpError('Token invalid', StatusCodes.UNAUTHORIZED);
   }
 };
