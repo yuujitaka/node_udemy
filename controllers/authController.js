@@ -111,7 +111,14 @@ const verifyEmail = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  res.cookie('token', '', {
+  await Token.findOneAndDelete({ user: req.user.id });
+
+  res.cookie('accessToken', '', {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+  });
+
+  res.cookie('refreshToken', '', {
     httpOnly: true,
     expires: new Date(Date.now()),
   });

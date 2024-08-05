@@ -28,7 +28,9 @@ const AppProvider = ({ children }) => {
 
   const logoutUser = async () => {
     try {
-      await axios.delete('/api/v1/auth/logout');
+      await axios.delete(`${url}/api/v1/auth/logout`, {
+        withCredentials: true,
+      });
       removeUser();
     } catch (error) {
       console.log(error);

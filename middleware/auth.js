@@ -12,23 +12,27 @@ const authenticationMiddleware = async (req, res, next) => {
       return next();
     }
 
-    const decodedRefreshToken = verifyJWT(refreshToken);
+    if (refreshToken) {
+      const decodedRefreshToken = verifyJWT(refreshToken);
 
-    const existingToken = await Token.findOne({
-      user: decodedRefreshToken.payload.id,
-      refreshToken: decodedRefreshToken.refreshToken,
-    });
+      const existingToken = await Token.findOne({
+        user: decodedRefreshToken.payload.id,
+        refreshToken: decodedRefreshToken.refreshToken,
+      });
 
-    if (!existingToken || !existingToken?.isValid) {
-      throw new HttpError('Token invalid', StatusCodes.UNAUTHORIZED);
+      if (!existingToken || !existingToken?.isValid) {
+        throw new HttpError('Token invalid', StatusCodes.UNAUTHORIZED);
+      }
+
+      setCookies(res, decodedRefreshToken.payload, existingToken.refreshToken);
+      req.user = decodedRefreshToken.payload;
+      return next();
+    } else {
+      throw new HttpError('Token invalid inside try', StatusCodes.UNAUTHORIZED);
     }
-
-    setCookies(res, decodedRefreshToken.payload, existingToken.refreshToken);
-    req.user = decodedRefreshToken.payload;
-    next();
   } catch (err) {
     console.error(err);
-    throw new HttpError('Token invalid', StatusCodes.UNAUTHORIZED);
+    throw new HttpError('Token invalid inside catch', StatusCodes.UNAUTHORIZED);
   }
 };
 

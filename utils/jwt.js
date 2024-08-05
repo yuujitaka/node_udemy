@@ -22,7 +22,7 @@ const setCookies = (res, tokenProps, refreshToken) => {
     secure: process.env.NODE_ENV === 'production',
     signed: true,
     sameSite: 'Lax',
-    maxAge: oneDay,
+    expires: new Date(Date.now() + oneDay),
   });
 
   res.cookie('refreshToken', refreshTokenJWT, {
