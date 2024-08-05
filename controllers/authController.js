@@ -7,6 +7,7 @@ const {
   sendVerificationEmail,
 } = require('../utils');
 const User = require('../model/User');
+const Token = require('../model/Token');
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -31,9 +32,25 @@ const login = async (req, res) => {
     throw new HttpError('Please verify your email', StatusCodes.UNAUTHORIZED);
 
   const tokenProps = createTokenUserObj(user);
+  let refreshToken = '';
 
-  setCookies(res, tokenProps);
+  const existingToken = await Token.findOne({ user: user._id });
 
+  if (existingToken) {
+    const { isValid } = existingToken;
+    if (!isValid) {
+      throw new HttpError('Invalid credentials', StatusCodes.UNAUTHORIZED);
+    }
+    refreshToken = existingToken.refreshToken;
+  } else {
+    refreshToken = crypto.randomBytes(40).toString('hex');
+    const userAgent = req.headers['user-agent'];
+    const ip = req.ip;
+
+    await Token.create({ refreshToken, ip, userAgent, user: user._id });
+  }
+
+  setCookies(res, tokenProps, refreshToken);
   res.status(StatusCodes.OK).json(tokenProps);
 };
 
