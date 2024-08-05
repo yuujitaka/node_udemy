@@ -1,14 +1,30 @@
 const { StatusCodes } = require('http-status-codes');
-const { HttpError, verifyJWT } = require('../utils');
+const { HttpError, verifyJWT, setCookies } = require('../utils');
+const Token = require('../model/Token');
 
 const authenticationMiddleware = async (req, res, next) => {
-  const token = req.signedCookies.token;
-
-  if (!token) throw new HttpError('No token found', StatusCodes.UNAUTHORIZED);
+  const { refreshToken, accessToken } = req.signedCookies;
 
   try {
-    const decodedToken = verifyJWT(token);
-    req.user = decodedToken.payload;
+    if (accessToken) {
+      const decodedAccessToken = verifyJWT(accessToken);
+      req.user = decodedAccessToken.payload;
+      return next();
+    }
+
+    const decodedRefreshToken = verifyJWT(refreshToken);
+
+    const existingToken = await Token.findOne({
+      user: decodedRefreshToken.payload.id,
+      refreshToken: decodedRefreshToken.refreshToken,
+    });
+
+    if (!existingToken || !existingToken?.isValid) {
+      throw new HttpError('Token invalid', StatusCodes.UNAUTHORIZED);
+    }
+
+    setCookies(res, decodedRefreshToken.payload, existingToken.refreshToken);
+    req.user = decodedRefreshToken.payload;
     next();
   } catch (err) {
     console.error(err);

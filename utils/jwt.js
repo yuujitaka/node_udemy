@@ -14,15 +14,15 @@ const verifyJWT = (token) => jwt.verify(token, process.env.JWT_SECRET);
 
 const setCookies = (res, tokenProps, refreshToken) => {
   const accessTokenJWT = createJWT({ payload: tokenProps });
-  const refreshTokenJWT = createJWT({ payload: refreshToken });
+  const refreshTokenJWT = createJWT({ payload: tokenProps, refreshToken });
   const oneDay = 1000 * 60 * 60 * 24;
 
   res.cookie('accessToken', accessTokenJWT, {
     httpOnly: true,
-    expires: new Date(Date.now() + oneDay),
     secure: process.env.NODE_ENV === 'production',
     signed: true,
     sameSite: 'Lax',
+    maxAge: oneDay,
   });
 
   res.cookie('refreshToken', refreshTokenJWT, {
