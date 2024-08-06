@@ -126,9 +126,41 @@ const logout = async (req, res) => {
   res.sendStatus(StatusCodes.OK);
 };
 
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email)
+    throw new HttpError('Please provide your email', StatusCodes.BAD_REQUEST);
+
+  const user = await User.findOne({ email });
+
+  //don't inform that the user doesn't exist, this makes it easier for attackers
+  /* if (!user) {
+    throw new HttpError('Invalid credentials', StatusCodes.UNAUTHORIZED);
+  } */
+
+  if (user) {
+    const passwordTokenExpiration = new Date(Date.now() + 1000 * 60 * 60);
+    const passwordToken = crypto.randomBytes(70).toString('hex');
+
+    user.passwordTokenExpiration = passwordTokenExpiration;
+    user.passwordToken = passwordToken;
+    await user.save();
+    //send email
+  }
+
+  res.status(StatusCodes.OK).json({ msg: 'Check your email' });
+};
+
+const resetPassword = async (req, res) => {
+  res.send('resetPassword');
+};
+
 module.exports = {
   login,
   register,
   verifyEmail,
   logout,
+  forgotPassword,
+  resetPassword,
 };
