@@ -5,6 +5,7 @@ const {
   setCookies,
   createTokenUserObj,
   sendVerificationEmail,
+  sendResetPasswordEmail,
 } = require('../utils');
 const User = require('../model/User');
 const Token = require('../model/Token');
@@ -143,6 +144,13 @@ const forgotPassword = async (req, res) => {
     const passwordTokenExpiration = new Date(Date.now() + 1000 * 60 * 60);
     const passwordToken = crypto.randomBytes(70).toString('hex');
 
+    await sendResetPasswordEmail({
+      name: user.name,
+      email: user.email,
+      passwordToken,
+      origin: 'http://localhost:3000',
+    });
+
     user.passwordTokenExpiration = passwordTokenExpiration;
     user.passwordToken = passwordToken;
     await user.save();
@@ -153,6 +161,29 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
+  const { token, email, password } = req.body;
+
+  if (!token || !email || !password)
+    throw new HttpError(
+      'Please provide the token, email and new password',
+      StatusCodes.BAD_REQUEST
+    );
+
+  const user = await User.findOne({ email });
+
+  if (user) {
+    if (
+      user.passwordToken === token &&
+      user.passwordTokenExpiration > Date.now()
+    ) {
+      user.password = password;
+      user.passwordToken = null;
+      user.passwordTokenExpiration = null;
+
+      await user.save();
+    }
+  }
+
   res.send('resetPassword');
 };
 

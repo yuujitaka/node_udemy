@@ -6,7 +6,10 @@ const {
 } = require('./jwt');
 const HttpError = require('./errors');
 const checkPermissions = require('./checkPermissions');
-const { sendVerificationEmail } = require('./sendEmail');
+const {
+  sendVerificationEmail,
+  sendResetPasswordEmail,
+} = require('./sendEmail');
 
 module.exports = {
   createJWT,
@@ -16,4 +19,5 @@ module.exports = {
   HttpError,
   checkPermissions,
   sendVerificationEmail,
+  sendResetPasswordEmail,
 };

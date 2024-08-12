@@ -29,4 +29,20 @@ const sendVerificationEmail = async ({
     html: `<h4>Hello ${name}!</h4>${message}`,
   });
 };
-module.exports = { sendVerificationEmail };
+
+const sendResetPasswordEmail = async ({
+  name,
+  email,
+  passwordToken,
+  origin,
+}) => {
+  const link = `${origin}/user/reset-password?token=${passwordToken}&email=${email}`;
+  const message = `<p>Reset your password by clicking <a href="${link}">here</a></p>`;
+
+  await sendEmail({
+    to: email,
+    subject: 'Auth Workflow - Reset Password',
+    html: `<h4>Hello ${name}!</h4>${message}`,
+  });
+};
+module.exports = { sendVerificationEmail, sendResetPasswordEmail };
